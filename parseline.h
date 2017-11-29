@@ -2,6 +2,8 @@
 #define PARSELINE_H
 
 /*>>> CONSTANTS <<<*/
+#define TRUE 1
+#define FALSE 0
 #define UNLIMITED 40960
 #define CMD_BYTE_MAX 1024
 #define PIPE_CMD_MAX 10
@@ -20,8 +22,8 @@
 #include <fcntl.h>
 
 /*>>> DEFINITIONS <<<*/
-#define PRINT_STAGE_HEADER
-#define PRINT_STAGE_BODY
+/* #define PRINT_STAGE_HEADER
+#define PRINT_STAGE_BODY */
 
 /*>>> STRUCTS <<<*/
 struct commandline {
@@ -51,11 +53,13 @@ struct stage* parse(void);
 
 void read_line(struct commandline* cmd);
 
+void safe_getline(struct commandline* cmd);
+
 struct stage* parse_line(struct node* list);
 
 void print_stages(struct stage* stages);
 
-void check_empty(char* str);
+int check_empty(char* str);
 
 void first_stage_in(struct stage* n, 
                     int i);

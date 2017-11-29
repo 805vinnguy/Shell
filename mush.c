@@ -4,7 +4,9 @@ int main(void) {
 
     struct stage* stages;
 
-    stages = parse();
-
+    while(1) {
+        stages = parse();
+    }
+    
     return 0;
 }

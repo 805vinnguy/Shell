@@ -21,16 +21,16 @@ struct stage* parse(void) {
 }
 
 void read_line(struct commandline* cmd) {
+    safe_getline(cmd);
+    cmd->bytes[cmd->bytec-1] = '\0';
+}
+
+void safe_getline(struct commandline* cmd) {
     size_t i;
     if((cmd->bytec = getline(&(cmd->bytes), &i, stdin)) == -1) {
         perror("getline");
         exit(1);
     }
-    if(cmd->bytec == 0) {
-        fprintf(stderr, "%s\n", "invalid null command");
-        exit(1);
-    }
-    cmd->bytes[cmd->bytec-1] = '\0';
 }
 
 struct stage* parse_line(struct node* list) {
@@ -40,9 +40,15 @@ struct stage* parse_line(struct node* list) {
     struct stage* head = NULL;
     struct stage* prev = NULL;
     struct stage* n;
+    int len = node_list_size(list);
 
     while(*curr != NULL) {
-        check_empty((*curr)->item);
+        if(check_empty((*curr)->item) == TRUE) {
+            if(len > 1) {
+                fprintf(stderr, "%s\n", "invalid null command");
+            }
+            break;
+        }
         #ifdef PRINT_STAGE_HEADER
             fprintf(stdout, "%s\n", "--------");
             fprintf(stdout, "%s %d: \"%s\"\n", "Stage", i, (*curr)->item);
@@ -93,15 +99,14 @@ void print_stages(struct stage* stages) {
     }
 }
 
-void check_empty(char* str) {
+int check_empty(char* str) {
     int i;
     for(i = 0; i < strlen(str); i++) {
         if(isspace(str[i]) == 0) {
-            return;
+            return FALSE;
         }
     }
-    fprintf(stderr, "%s\n", "invalid null command");
-    exit(0);
+    return TRUE;
 }
 
 void first_stage_in(struct stage* n, int i) {

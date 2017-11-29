@@ -62,7 +62,7 @@ struct stage* build_stage(struct node* list, char* pipe) {
     n->argc = node_list_size(list);
     n->argv = 
         (char*)calloc(strlen(pipe)+3*(n->argc)+1, sizeof(char));
-    
+
     stage_input(list, n);
     stage_output(list, n);
     build_argv(list, n);
