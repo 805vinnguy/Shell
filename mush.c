@@ -20,7 +20,7 @@ int main(void) {
         cmd->pipec = node_list_size(str_list_split_on_pipe);
         too_many_stages(cmd);/* checks */
 
-        /* cd goes here. builtins */
+        my_cd(str_list_split_on_pipe);/* builtins */
 
         stages = parse_line(str_list_split_on_pipe);/* parse */
     }

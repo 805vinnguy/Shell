@@ -6,6 +6,8 @@
 #include "stage.h"
 #include <unistd.h>
 
+void my_cd(struct node* list);
+
 void safe_cd(char* path);
 
 void my_exit(struct commandline* cmd);
