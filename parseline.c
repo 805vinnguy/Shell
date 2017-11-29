@@ -13,6 +13,7 @@
 } */
 
 void read_line(struct commandline* cmd) {
+    PARSELINE_SETUP
     safe_getline(cmd);
     cmd->bytes[cmd->bytec-1] = '\0';
 }

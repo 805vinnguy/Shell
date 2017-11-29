@@ -8,8 +8,7 @@ int main(void) {
     struct stage* stages;
 
     while(TRUE) {
-        PARSELINE_SETUP/* getline */
-        read_line(cmd);
+        read_line(cmd);/* getline */
 
         check_empty(cmd->bytes);/* checks */
         line_too_long(cmd);
@@ -17,11 +16,15 @@ int main(void) {
         my_exit(cmd);/* builtins */
 
         str_list_split_on_pipe = split(cmd->bytes, PIPE_DELIM);
+
         cmd->pipec = node_list_size(str_list_split_on_pipe);
         too_many_stages(cmd);/* checks */
+
+        /* cd goes here. builtins */
 
         stages = parse_line(str_list_split_on_pipe);/* parse */
     }
     
+    free(cmd);
     return 0;
 }

@@ -9,7 +9,7 @@ void safe_cd(char* path) {
 }
 
 void my_exit(struct commandline* cmd) {
-    if(strcmp(cmd->bytes, "exit") == 0) {
+    if(strstr(cmd->bytes, "exit") != NULL) {
         exit(EXIT_SUCCESS);
     }
 }
