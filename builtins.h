@@ -5,8 +5,12 @@
 #include "parseline.h"
 #include "stage.h"
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void my_cd(struct node* list);
+
+void safe_system(char* command);
 
 void safe_cd(char* path);
 
