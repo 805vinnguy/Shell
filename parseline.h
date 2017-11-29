@@ -6,7 +6,7 @@
 #define CMD_BYTE_MAX 1024
 #define PIPE_CMD_MAX 10
 #define CMD_ARG_MAX 10
-#define PROMPT "line: "
+#define PROMPT "8-P "
 
 #include "stage.h"
 #include <stdio.h>

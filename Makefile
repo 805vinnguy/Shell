@@ -2,13 +2,15 @@ CC=gcc
 CFLAGS=-Wall -pedantic -g -O3
 all: mush clean
 
-mush: mush.o parseline.o stage.o
+mush: mush.o parseline.o stage.o changeworkdir.o
 
 mush.o: mush.c
 
 parseline.o: parseline.c
 
 stage.o: stage.c
+
+changeworkdir.o: changeworkdir.c
 
 clean:
 	-rm *.o
