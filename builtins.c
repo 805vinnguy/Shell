@@ -18,4 +18,5 @@ void my_exit(struct commandline* cmd) {
             exit(EXIT_SUCCESS);
         }
     }
+    free(line_rm_spaces);
 }
