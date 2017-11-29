@@ -37,10 +37,10 @@ struct stage* parse_line(struct node* list) {
     struct node** curr = &list;
     struct node* str_list_split_on_space;
     int i = 0;
+    int len = node_list_size(list);
     struct stage* head = NULL;
     struct stage* prev = NULL;
     struct stage* n;
-    int len = node_list_size(list);
 
     while(*curr != NULL) {
         if(check_empty((*curr)->item) == TRUE) {
