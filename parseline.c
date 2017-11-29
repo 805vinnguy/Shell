@@ -1,20 +1,12 @@
 #include "parseline.h"
 
-struct stage* parse(void) {
-
-    struct commandline* cmd =
-        (struct commandline*)malloc(sizeof(struct commandline));
+struct stage* parse(struct commandline* cmd) {
     struct node* str_list_split_on_pipe;
     struct stage* stages;
-    
-    PARSELINE_SETUP
-    read_line(cmd);
-    check_empty(cmd->bytes);
-    line_too_long(cmd);
+
     str_list_split_on_pipe = split(cmd->bytes, PIPE_DELIM);
     cmd->pipec = node_list_size(str_list_split_on_pipe);
     too_many_stages(cmd);
-    free(cmd);
     stages = parse_line(str_list_split_on_pipe);
 
     return stages;

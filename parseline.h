@@ -49,7 +49,7 @@ struct commandline {
 }
 
 /*>>> FUNCTIONS <<<*/
-struct stage* parse(void);
+struct stage* parse(struct commandline* cmd);
 
 void read_line(struct commandline* cmd);
 
