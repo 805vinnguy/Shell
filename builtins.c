@@ -9,8 +9,11 @@
 
 void my_cd(struct node* list) {
     char* token;
-    char* line =
-        (char*)calloc(strlen(list->item)+1, sizeof(char));
+    char* line;
+    if(list == NULL) {
+        return;
+    }
+    line = (char*)calloc(strlen(list->item)+1, sizeof(char));
     /* if cd not in a pipe */
     if(node_list_size(list) == 1) {
         strcat(line, list->item);
@@ -30,13 +33,13 @@ void my_cd(struct node* list) {
 
 void safe_system(char* command) {
     if(system(command) == -1) {
-        perror("system call");
+        perror(command);
     }
 }
 
 void safe_cd(char* path) {
     if(chdir(path) == -1) {
-        perror(BUILTIN_CD);
+        perror(path);
     }
 }
 
