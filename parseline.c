@@ -9,7 +9,6 @@ void read_line(struct commandline* cmd) {
 void safe_getline(struct commandline* cmd) {
     size_t i;
     if((cmd->bytec = getline(&(cmd->bytes), &i, stdin)) == -1) {
-        perror("getline");
         exit(1);
     }
 }

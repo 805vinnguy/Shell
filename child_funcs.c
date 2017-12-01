@@ -9,9 +9,17 @@ pid_t safe_fork(void) {
     return child_pid;
 }
 
-int child_exec(pid_t child_pid, struct stage* st) {
-    
-    if(child_pid == 0) {
+struct child_pid_node* make_child_pid_node(pid_t child_pid) {
+    struct child_pid_node* cp = malloc(sizeof(struct child_pid_node));
+    cp->pid = child_pid;
+    cp->next = NULL;
+    return cp;
+}
 
+int child_exec(pid_t child_pid, struct stage* st) {
+    if(child_pid == 0) {
+        /* dup appropriate fds to stdin/stdout */
+        /* close all other fds */
+        /* exec command */
     }
 }

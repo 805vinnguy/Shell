@@ -1,12 +1,11 @@
 #include "io.h"
 
 int get_input(struct stage* st) {
-    int fd = safe_dup(STDIN_FILENO);
-    if( (strstr(st->input, INPUT_PIPE) != 0) &&
-        (strcmp(st->input, INPUT_STDIN) != 0) ) {
+    /* should be the same for both pipe and file.
+       no need to dup since fork dups parent's fds */
+    if(strcmp(st->input, INPUT_STDIN) != 0) {
         
     }
-    return fd;
 }
 
 int safe_dup(int oldfd) {

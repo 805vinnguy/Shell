@@ -28,6 +28,7 @@
 /*>>> STRUCTS <<<*/
 struct commandline {
     ssize_t bytec;
+    size_t buf_size;
     char* bytes;
     int pipec;
 };
@@ -45,6 +46,7 @@ struct commandline {
     fflush(stdout); \
     cmd->bytec = 0; \
     cmd->pipec = 0; \
+    cmd->buf_size = 0; \
     cmd->bytes = NULL; \
 }
 

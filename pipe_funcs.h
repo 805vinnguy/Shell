@@ -9,6 +9,9 @@
 #include "builtins.h"
 #include <unistd.h>
 
+#define READ_END 0
+#define WRITE_END 1
+
 struct pipe_node {
     int pipe_io[2];
     struct pipe_node* next;
@@ -16,5 +19,9 @@ struct pipe_node {
 
 /* FUNCTIONS */
 void safe_pipe(int pipefd[2]);
+
+struct pipe_node* make_pipe(void);
+
+struct pipe_node* make_pipeline(struct stage* stages);
 
 #endif
