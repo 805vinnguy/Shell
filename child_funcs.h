@@ -4,7 +4,11 @@
 #include "mush.h"
 #include "parseline.h"
 #include "stage.h"
+#include "io.h"
 #include <unistd.h>
+#include <stdio.h>
+
+#define EXIT_CHILD 2
 
 /* FUNCTIONS */
 pid_t safe_fork(void);
