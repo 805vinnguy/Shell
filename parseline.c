@@ -1,17 +1,5 @@
 #include "parseline.h"
 
-/* struct stage* parse(struct commandline* cmd) {
-    struct node* str_list_split_on_pipe;
-    struct stage* stages;
-
-    str_list_split_on_pipe = split(cmd->bytes, PIPE_DELIM);
-    cmd->pipec = node_list_size(str_list_split_on_pipe);
-    too_many_stages(cmd);
-    stages = parse_line(str_list_split_on_pipe);
-
-    return stages;
-} */
-
 void read_line(struct commandline* cmd) {
     PARSELINE_SETUP
     safe_getline(cmd);

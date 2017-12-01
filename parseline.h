@@ -49,8 +49,6 @@ struct commandline {
 }
 
 /*>>> FUNCTIONS <<<*/
-/* struct stage* parse(struct commandline* cmd); */
-
 void read_line(struct commandline* cmd);
 
 void safe_getline(struct commandline* cmd);
