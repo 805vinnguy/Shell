@@ -19,17 +19,19 @@ struct pipe_node* make_pipeline(struct stage* stages) {
     struct pipe_node* tail = head;
     struct pipe_node* p;
     struct stage** curr = &stages;
-    while(*curr != NULL) {
-        p = make_pipe();
-        if(head == NULL) {
-            head = p;
-            tail = p;
+    if(*curr != NULL) {
+        while((*curr)->next != NULL) {
+            p = make_pipe();
+            if(head == NULL) {
+                head = p;
+                tail = p;
+            }
+            else {
+                tail->next = p;
+                tail = p;
+            }
+            curr = &((*curr)->next);
         }
-        else {
-            tail->next = p;
-            tail = p;
-        }
-        curr = &((*curr)->next);
     }
     return head;
 }

@@ -8,10 +8,9 @@ int get_input(struct stage* st) {
     }
 }
 
-int safe_dup(int oldfd) {
-    int newfd;
-    if( (newfd = dup(oldfd)) == -1) {
-        perror("dup");
+int safe_dup2(int oldfd, int newfd) {
+    if( (newfd = dup2(oldfd, newfd)) == -1) {
+        perror("dup2");
         exit(EXIT_CHILD);
     }
     return newfd;

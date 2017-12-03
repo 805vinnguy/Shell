@@ -1,14 +1,15 @@
 #include "parseline.h"
 
-void read_line(struct commandline* cmd) {
-    PARSELINE_SETUP
-    safe_getline(cmd);
-    cmd->bytes[cmd->bytec-1] = '\0';
+void cmd_init(struct commandline* cmd) {
+    cmd->bytec = 0;
+    cmd->pipec = 0;
+    cmd->buf_size = 0;
+    cmd->bytes = NULL;
 }
 
-void safe_getline(struct commandline* cmd) {
+void safe_getline(struct commandline* cmd, FILE* file) {
     size_t i;
-    if((cmd->bytec = getline(&(cmd->bytes), &i, stdin)) == -1) {
+    if((cmd->bytec = getline(&(cmd->bytes), &i, file)) == -1) {
         exit(1);
     }
 }

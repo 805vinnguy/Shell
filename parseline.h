@@ -44,16 +44,12 @@ struct commandline {
 #define PARSELINE_SETUP { \
     fprintf(stdout, "%s", PROMPT); \
     fflush(stdout); \
-    cmd->bytec = 0; \
-    cmd->pipec = 0; \
-    cmd->buf_size = 0; \
-    cmd->bytes = NULL; \
 }
 
 /*>>> FUNCTIONS <<<*/
-void read_line(struct commandline* cmd);
+void cmd_init(struct commandline* cmd);
 
-void safe_getline(struct commandline* cmd);
+void safe_getline(struct commandline* cmd, FILE* file);
 
 struct stage* parse_line(struct node* list);
 
