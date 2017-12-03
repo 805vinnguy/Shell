@@ -22,6 +22,6 @@ void safe_pipe(int pipefd[2]);
 
 struct pipe_node* make_pipe(void);
 
-struct pipe_node* make_pipeline(struct stage* stages);
+struct pipe_node* make_pipeline(struct process* processes);
 
 #endif

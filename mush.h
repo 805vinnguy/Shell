@@ -1,6 +1,13 @@
 #ifndef MUSH_H
 #define MUSH_H
 
+struct process {
+    int inputfile;
+    int outputfile;
+    char** argv;
+    struct process* next;
+};
+
 #include "builtins.h"
 #include "parseline.h"
 #include "stage.h"
@@ -9,19 +16,12 @@
 #include "io.h"
 #include <stdio.h>
 
-struct process {
-    int inputfile;
-    int outputfile;
-    char** argv;
-    struct process* next;
-};
-
 /* FUNCTIONS */
 void run_interactive(struct commandline* cmd);
 
-/* void run_batch_processing(struct commandline* cmd, char* argv[]);
- */
-void stage_loop(struct stage* stages);
+void run_batch_processing(struct commandline* cmd, char* argv[]);
+
+void stage_loop(struct process* processes);
 
 struct process* stage_to_process(struct stage* stages);
 

@@ -14,11 +14,11 @@ struct pipe_node* make_pipe(void) {
     return p;
 }
 
-struct pipe_node* make_pipeline(struct stage* stages) {
+struct pipe_node* make_pipeline(struct process* processes) {
     struct pipe_node* head = NULL;
     struct pipe_node* tail = head;
     struct pipe_node* p;
-    struct stage** curr = &stages;
+    struct process** curr = &processes;
     if(*curr != NULL) {
         while((*curr)->next != NULL) {
             p = make_pipe();

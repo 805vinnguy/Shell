@@ -2,10 +2,9 @@
 
 int main(int argc, char* argv[]) {
     struct commandline* cmd = malloc(sizeof(struct commandline));
-    FILE* infile;
 
     if(argc > 1) {
-        /* run_batch_processing() */
+        run_batch_processing(cmd, argv);
     }
     else {
         run_interactive(cmd);
@@ -29,42 +28,47 @@ void run_interactive(struct commandline* cmd) {
         str_list_split_on_pipe = split(cmd->bytes, PIPE_DELIM);
         my_cd(str_list_split_on_pipe);
         stages = parse_line(str_list_split_on_pipe);
-        stage_loop(stages);
+        processes = stage_to_process(stages);
+        stage_loop(processes);
     }
 }
 
-/* void run_batch_processing(struct commandline* cmd, char* argv[]) {
-    struct str_list_split_on_pipe;
+void run_batch_processing(struct commandline* cmd, char* argv[]) {
+    struct node* str_list_split_on_pipe;
     struct stage* stages;
+    struct process* processes;
+    FILE* infile;
 
-    if( (file = fopen(argv[1], "r")) == NULL ) {
+    if( (infile = fopen(argv[1], "r")) == NULL ) {
         perror(argv[1]);
         exit(1);
     }
-
-} */
+    while(feof(infile) == 0) {
+        cmd_init(cmd);
+        safe_getline(cmd, infile);
+        cmd->bytes[cmd->bytec-1] = '\0';
+        my_exit(cmd);
+        str_list_split_on_pipe = split(cmd->bytes, PIPE_DELIM);
+        my_cd(str_list_split_on_pipe);
+        stages = parse_line(str_list_split_on_pipe);
+        processes = stage_to_process(stages);
+        stage_loop(processes);
+    }
+}
 
 /* place this inside while(TRUE) loop */
-void stage_loop(struct stage* stages) {
-    struct stage** curr = &stages;
-    int fd_input;
-    int fd_output;
+void stage_loop(struct process* processes) {
+    struct process** curr = &processes;
     struct pipe_node* pipe_list;/* pipe_list = pipe_list->next */
+
     struct child_pid_node* child_pid_list = NULL;
     struct child_pid_node* tail = child_pid_list;
     struct child_pid_node* cp;
     pid_t child_pid;
 
     while(*curr != NULL) {
-        /* open input/output fds */
-        if(*curr == stages) {
-            fd_input = open((*curr)->input, O_RDONLY);
-        }
-        if((*curr)->next == NULL) {
-            fd_output = creat((*curr)->output, S_IRWXU | S_IRWXG | S_IRWXO);
-        }
         /* create pipes */
-        pipe_list = make_pipeline(stages);
+        pipe_list = make_pipeline(processes);
         /* child_pid = safe_fork();
         cp = make_child_pid_node(child_pid);
         if(child_pid_list == NULL) {
@@ -86,6 +90,7 @@ void stage_loop(struct stage* stages) {
     }
 }
 
+/* pass ret of this to stage_loop */
 struct process* stage_to_process(struct stage* stages) {
     struct stage** curr = &stages;
     struct process* processes = NULL;
@@ -114,21 +119,17 @@ int open_input_fd(struct stage** curr, struct stage* stages) {
         if(strcmp((*curr)->input, INPUT_STDIN) != 0) {
             return open((*curr)->input, O_RDONLY);
         }
-        else {
-            return STDIN_FILENO;
-        }
     }
+    return STDIN_FILENO;
 }
 
 int open_output_fd(struct stage** curr, struct stage* stages) {
-    if((*curr)->next != NULL) {
+    if((*curr)->next == NULL) {
         if(strcmp((*curr)->output, OUTPUT_STDOUT) != 0) {
             return creat((*curr)->output, S_IRWXU | S_IRWXG | S_IRWXO);
         }
-        else {
-            return STDOUT_FILENO;
-        }
     }
+    return STDOUT_FILENO;
 }
 
 char** nodelist_to_stringlist(struct stage* s) {
