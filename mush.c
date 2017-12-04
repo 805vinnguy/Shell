@@ -26,7 +26,9 @@ void run_interactive(struct commandline* cmd) {
         cmd->bytes[cmd->bytec-1] = '\0';
         my_exit(cmd);
         str_list_split_on_pipe = split(cmd->bytes, PIPE_DELIM);
-        my_cd(str_list_split_on_pipe);
+        if(my_cd(str_list_split_on_pipe) == TRUE) {
+            continue;
+        }
         stages = parse_line(str_list_split_on_pipe);
         processes = stage_to_process(stages);
         stage_loop(processes);
@@ -49,43 +51,76 @@ void run_batch_processing(struct commandline* cmd, char* argv[]) {
         cmd->bytes[cmd->bytec-1] = '\0';
         my_exit(cmd);
         str_list_split_on_pipe = split(cmd->bytes, PIPE_DELIM);
-        my_cd(str_list_split_on_pipe);
+        if(my_cd(str_list_split_on_pipe) == TRUE) {
+            continue;
+        }
         stages = parse_line(str_list_split_on_pipe);
         processes = stage_to_process(stages);
         stage_loop(processes);
     }
 }
 
-/* place this inside while(TRUE) loop */
 void stage_loop(struct process* processes) {
     struct process** curr = &processes;
-    struct pipe_node* pipe_list;/* pipe_list = pipe_list->next */
-
     struct child_pid_node* child_pid_list = NULL;
     struct child_pid_node* tail = child_pid_list;
-    struct child_pid_node* cp;
     pid_t child_pid;
 
     while(*curr != NULL) {
-        /* create pipes */
-        pipe_list = make_pipeline(processes);
-        /* child_pid = safe_fork();
-        cp = make_child_pid_node(child_pid);
+        child_pid = safe_fork();
+        tail = add_child_pid(tail, child_pid);
         if(child_pid_list == NULL) {
-            child_pid_list = cp;
-            tail = cp;
+            child_pid_list = tail;
         }
-        else {
-            tail->next = cp;
-            tail = cp;
-        } */
-        /* check if child goes here */
         if(child_pid == 0) {
-            /* child_exec */
-            /* pass it stages, curr_pipe */
             /* dup, cleanup, exec */
+            safe_dup2((*curr)->inputfile, STDIN_FILENO);
+            safe_dup2((*curr)->outputfile, STDOUT_FILENO);
+            cleanup(processes);
+            execvp((*curr)->argv[0], (*curr)->argv);
+            perror((*curr)->argv[0]);
+            exit(EXIT_CHILD);
         }
-        /* if parent */
+        curr = &((*curr)->next);
+    }
+    /* if parent */
+    cleanup(processes);
+    /* wait */
+    wait_all(child_pid_list);
+}
+
+void wait_all(struct child_pid_node* list) {
+    while(list != NULL) {
+        if(waitpid(list->pid, NULL, 0) == -1) {
+            perror("waitpid");
+        }
+        list = list->next;
+    }
+}
+
+void cleanup(struct process* processes) {
+    struct process* to_be_closed = processes;
+    while(to_be_closed != NULL) {
+        safe_close(to_be_closed->inputfile);
+        safe_close(to_be_closed->outputfile);
+        to_be_closed = to_be_closed->next;
+    }
+}
+
+void safe_close(int fd) {
+    if((fd == STDIN_FILENO) || (fd == STDOUT_FILENO)) {
+        return;
+    }
+    close(fd);
+}
+
+void set_pipes(struct process* processes) {
+    struct process** curr = &processes;
+    int pipes[2];
+    while((*curr != NULL) && ((*curr)->next != NULL)) {
+        safe_pipe(pipes);
+        (*curr)->outputfile = pipes[WRITE_END];
+        ((*curr)->next)->inputfile = pipes[READ_END];
         curr = &((*curr)->next);
     }
 }
@@ -111,6 +146,7 @@ struct process* stage_to_process(struct stage* stages) {
         }
         curr = &((*curr)->next);
     }
+    set_pipes(processes);
     return processes;
 }
 
@@ -142,4 +178,26 @@ char** nodelist_to_stringlist(struct stage* s) {
         i++;
     }
     return stringlist;
+}
+
+int process_list_size(struct process* processes) {
+    struct process** curr = &processes;
+    int len = 0;
+    while(*curr != NULL) {
+        len++;
+        curr = &((*curr)->next);
+    }
+    return len;
+}
+
+struct child_pid_node* add_child_pid(struct child_pid_node* tail, 
+                                     pid_t child_pid) {
+    struct child_pid_node* cp = make_child_pid_node(child_pid);
+    if(cp == NULL) {
+        exit(1);
+    }
+    if(tail != NULL) {
+        tail->next = cp;
+    }
+    return cp;
 }

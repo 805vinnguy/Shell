@@ -18,8 +18,6 @@
 #include <sys/stat.h>
 
 /* FUNCTIONS */
-int get_input(struct stage* st);
-
 int safe_dup2(int oldfd, int newfd);
 
 #endif

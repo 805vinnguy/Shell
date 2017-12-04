@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void my_cd(struct node* list);
+int my_cd(struct node* list);
 
 void safe_system(char* command);
 

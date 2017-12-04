@@ -55,11 +55,11 @@ int stage_input(struct node* list,
 int stage_output(struct node* list,
                   struct stage* n);
 
-void pipe_input(struct stage* n, 
+int pipe_input(struct stage* n, 
                 struct node** curr, 
                 int i);
 
-void pipe_output(struct stage* n, 
+int pipe_output(struct stage* n, 
                  struct node** curr, 
                  int i);
 

@@ -5,13 +5,14 @@
 #define BUILTIN_EXIT "exit"
 #define BUILTIN_CD "cd"
 
-#define BASH_PWD
+/* #define BASH_PWD */
 
-void my_cd(struct node* list) {
+int my_cd(struct node* list) {
     char* token;
     char* line;
+    int res = FALSE;
     if(list == NULL) {
-        return;
+        return res;
     }
     line = (char*)calloc(strlen(list->item)+1, sizeof(char));
     /* if cd not in a pipe */
@@ -19,6 +20,7 @@ void my_cd(struct node* list) {
         strcat(line, list->item);
         if( (token = strtok(line, WHITESPACE)) != NULL) {
             if(strcmp(token, BUILTIN_CD) == 0) {
+                res = TRUE;
                 if( (token = strtok(NULL, WHITESPACE)) != NULL) {
                     safe_cd(token);
                     #ifdef BASH_PWD
@@ -29,6 +31,7 @@ void my_cd(struct node* list) {
         }
     }
     free(line);
+    return res;
 }
 
 void safe_system(char* command) {

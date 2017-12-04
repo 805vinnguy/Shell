@@ -17,10 +17,10 @@ struct stage* init_stage(void) {
 
 int node_list_size(struct node* head) {
     int i = 0;
-    struct node* current = head;
-    while(current != NULL) {
+    struct node** current = &head;
+    while(*current != NULL) {
         i++;
-        current = current->next;
+        current = &((*current)->next);
     }
     return i;
 }
@@ -169,11 +169,12 @@ int stage_output(struct node* list, struct stage* n) {
     return i;
 }
 
-void pipe_input(struct stage* n, struct node** curr, int i) {
+int pipe_input(struct stage* n, struct node** curr, int i) {
+    int res = TRUE;
     if(i > 0) {/*not stage 0*/
         if(n->input != NULL) {
             fprintf(stderr, "%s\n", "ambiguous input");
-            exit(1);
+            res = FALSE;
         }
         else {
             n->input =
@@ -181,13 +182,15 @@ void pipe_input(struct stage* n, struct node** curr, int i) {
             sprintf(n->input, "pipe from stage %d", i-1);
         }
     }
+    return res;
 }
 
-void pipe_output(struct stage* n, struct node** curr, int i) {
+int pipe_output(struct stage* n, struct node** curr, int i) {
+    int res = TRUE;
     if((*curr)->next != NULL) {/*not last stage*/
         if(n->output != NULL) {
             fprintf(stderr, "%s\n", "ambiguous output");
-            exit(1);
+            res = FALSE;
         }
         else {
             n->output =
@@ -202,4 +205,5 @@ void pipe_output(struct stage* n, struct node** curr, int i) {
             memcpy(n->output, "original stdout", 15);
         }
     }
+    return res;
 }

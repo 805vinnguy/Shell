@@ -46,8 +46,12 @@ struct stage* parse_line(struct node* list) {
             prev = n;
         }
         first_stage_in(n, i);
-        pipe_input(n, curr, i);
-        pipe_output(n, curr, i);
+        if(pipe_input(n, curr, i) == FALSE) {
+            return NULL;
+        }
+        if(pipe_output(n, curr, i) == FALSE) {
+            return NULL;
+        }
         #ifdef PRINT_STAGE_BODY
             fprintf(stdout, "input: %s\n", n->input);
             fprintf(stdout, "output: %s\n", n->output);
@@ -103,20 +107,17 @@ void first_stage_in(struct stage* n, int i) {
 void too_many_args(struct stage* n) {
     if(n->argc > CMD_ARG_MAX) {
         fprintf(stderr, "%s\n", "too many arguments");
-        exit(1);
     }
 }
 
 void too_many_stages(struct commandline* cmd) {
     if(cmd->pipec > PIPE_CMD_MAX) {
         fprintf(stderr, "%s\n", "pipeline too deep");
-        exit(1);
     }
 }
 
 void line_too_long(struct commandline* cmd) {
     if(cmd->bytec > CMD_BYTE_MAX) {
         fprintf(stderr, "%s\n", "command too long");
-        exit(1);
     }
 }
