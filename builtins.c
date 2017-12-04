@@ -30,7 +30,7 @@ int my_cd(struct node* list) {
             }
         }
     }
-    free(line);
+    /* free(line); */
     return res;
 }
 
@@ -56,5 +56,5 @@ void my_exit(struct commandline* cmd) {
             exit(EXIT_SUCCESS);
         }
     }
-    free(line_rm_spaces);
+    /* free(line_rm_spaces); */
 }
