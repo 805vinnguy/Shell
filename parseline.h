@@ -33,6 +33,8 @@ struct commandline {
     int pipec;
 };
 
+#include "mush.h"
+
 /*>>> MACROS <<<*/
 #define CHECK_VALID_FORK { \
     if( (child_pid = fork()) < 0) { \

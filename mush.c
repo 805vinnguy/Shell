@@ -2,6 +2,13 @@
 
 int main(int argc, char* argv[]) {
     struct commandline* cmd = malloc(sizeof(struct commandline));
+    struct sigaction sa;
+    sa.sa_handler = handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    if(sigaction(SIGINT, &sa, NULL) == -1) {
+        perror("sig");
+    }
 
     if(argc > 1) {
         run_batch_processing(cmd, argv);
@@ -13,6 +20,24 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
+void block(void) {
+    sigset_t signal_set;
+    sigemptyset(&signal_set);
+    sigaddset(&signal_set, SIGINT);
+    sigprocmask(SIG_BLOCK, &signal_set, NULL);
+}
+
+void unblock(void) {
+    sigset_t signal_set;
+    sigemptyset(&signal_set);
+    sigaddset(&signal_set, SIGINT);
+    sigprocmask(SIG_UNBLOCK, &signal_set, NULL);
+}
+
+void handler(int num) {
+    
+}
+
 void run_interactive(struct commandline* cmd) {
     struct node* str_list_split_on_pipe;
     struct stage* stages;
@@ -20,6 +45,7 @@ void run_interactive(struct commandline* cmd) {
 
     while(TRUE) {
         cmd_init(cmd);
+        block();
         fprintf(stdout, "%s", PROMPT);
         fflush(stdout);
         safe_getline(cmd, stdin);
@@ -47,6 +73,7 @@ void run_batch_processing(struct commandline* cmd, char* argv[]) {
     }
     while(feof(infile) == 0) {
         cmd_init(cmd);
+        block();
         safe_getline(cmd, infile);
         cmd->bytes[cmd->bytec-1] = '\0';
         my_exit(cmd);
@@ -67,6 +94,7 @@ void stage_loop(struct process* processes) {
     pid_t child_pid;
 
     while(*curr != NULL) {
+        unblock();
         child_pid = safe_fork();
         tail = add_child_pid(tail, child_pid);
         if(child_pid_list == NULL) {
@@ -90,12 +118,14 @@ void stage_loop(struct process* processes) {
 }
 
 void wait_all(struct child_pid_node* list) {
+    block();
     while(list != NULL) {
         if(waitpid(list->pid, NULL, 0) == -1) {
             perror("waitpid");
         }
         list = list->next;
     }
+    unblock();
 }
 
 void cleanup(struct process* processes) {

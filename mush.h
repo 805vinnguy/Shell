@@ -17,8 +17,15 @@ struct process {
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
 
 /* FUNCTIONS */
+void handler(int num);
+
+void block(void);
+
+void unblock(void);
+
 void run_interactive(struct commandline* cmd);
 
 void run_batch_processing(struct commandline* cmd, char* argv[]);
